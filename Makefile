@@ -5,13 +5,13 @@ default:
 reproduce: clear data
 
 clear: 
-	rm -r data
+	rm -r makdata
 	mkdir -p data/tidy data/json
 
 data: data/json data/tidy
 
 data/json:
-	python3 -m scripts.parse_pdfs pdfs 2>&1 | tee data/parsing-log.txt
+	python310 -m scripts.parse_pdfs pdfs 2>&1 | tee data/parsing-log.txt
 
 data/tidy:
-	python3 -m scripts.tidify_results
+	python310 -m scripts.tidify_results

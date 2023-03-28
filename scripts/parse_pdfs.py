@@ -3,9 +3,14 @@ import re
 import glob
 import sys
 import os
-from .parsers.common import EmptyResultsException
-from .parsers.standard import parse_page as parse_standard
-from .parsers.alternative import parse_page as parse_alternative
+import json
+import parsers.common
+
+'''
+from parsers.common import EmptyResultsException
+from parsers.standard import parse_page as parse_standard
+from parsers.alternative import parse_page as parse_alternative
+'''
 
 def parse_page(page):
     """
@@ -97,8 +102,16 @@ def parse_pdf_from_path(path):
     except pdfplumber.pdfminer.pdfparser.PDFSyntaxError as e:
             sys.stderr.write("*** IS REAL PDF?: {}\n".format(path))
 
+def parse_pdf_python_attempt(paths):
+    for i, path in enumerate(paths):
+        fname = path.rsplit("/", 1)[-1]
+        sys.stderr.write("\n--- {} ---\n".format(fname))
+        parsed = parse_pdf_from_path(path)
+        dest = os.path.join("data/json", fname[:-4] + ".json")
+        with open(dest, "w") as f:
+            json.dump(parsed, f, sort_keys=True, indent=2)
+
 if __name__ == "__main__":
-    import json
     for arg in sys.argv[1:]:
         if arg[-4:].lower() == ".pdf":
             paths = [ arg ]
@@ -112,3 +125,5 @@ if __name__ == "__main__":
             dest = os.path.join("data/json", fname[:-4] + ".json")
             with open(dest, "w") as f:
                 json.dump(parsed, f, sort_keys=True, indent=2)
+                
+
